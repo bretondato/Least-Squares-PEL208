@@ -7,13 +7,13 @@ from mpl_toolkits.mplot3d import Axes3D
 
 def transposeMatrix(m):
     t = map(list, zip(*m))
-    print(t)
+    #rint(t)
     return t
 
 
 def getMatrixMinor(m,i,j):
     min = [row[:j] + row[j+1:] for row in (m[:i]+m[i+1:])]
-    print(min)
+    #print(min)
     return min
 
 
@@ -68,6 +68,8 @@ def weight(X):
 def xWithbias2D(matrix_X):
     matrix_Xb = [[],[]]
 
+    #print("Matrix x: ", matrix_X)
+
     for i in matrix_X:
         matrix_Xb[0].append(i)
         matrix_Xb[1].append(1)
@@ -121,13 +123,13 @@ def leastSquare(X,  y, w):
     """
     if not w:
         W = weight(X)
-        print(W)
+        #print(W)
     else:
         W = w
 
     """ Transposição da Matrix X """
     Xt = transpose(X)
-    print(Xt)
+    #print(Xt)
 
     """ Multiplicação do vetor de peso pela matriz X """
     Mtemp = []
@@ -136,7 +138,7 @@ def leastSquare(X,  y, w):
 
 
     #Mtemp = np.matmul(W, Xt)
-    print("Mtemp ", Mtemp)
+    #print("Mtemp ", Mtemp)
 
     """
     Primenra Parte da equação onde é multiplicada a Matriz X pela sua transposta e 
@@ -144,7 +146,7 @@ def leastSquare(X,  y, w):
     """
 
     Mtemp2 = np.matmul(Mtemp, Xt)
-    print(Mtemp2)
+    #print(Mtemp2)
 
     """ Inversão da matrix quadradica obtida acima """
 
@@ -155,18 +157,25 @@ def leastSquare(X,  y, w):
 
     # Usando Metodo do numpy p/ inverter a matriz
     Xin = np.linalg.inv(Mtemp2)
-    print(Xin)
+    #print(Xin)
 
     """ Terceira parte da equação onde multiplicamos a matrix y pela transposta de X """
     # multiplicação do vetor de peso pela matriz y
     Mtemp3 = W * y
 
     Mtemp4 = np.matmul(Mtemp3, Xt)
-    print(Mtemp4)
+    #print(Mtemp4)
 
     """ Quarta parte da equação onde obtemos as coodenadas que descrevem a reta """
     ls = np.matmul(Xin, Mtemp4)
     print(ls)
+
+    x = []
+    Y = []
+    for i in X[0]:
+        x.append(ls[0]*float(i)+ls[1])
+    for i in y:
+        Y.append(ls[0] * float(i) + ls[1])
 
     return (ls)
 
@@ -182,6 +191,13 @@ def wheightedLeastSquare(X, y, w):
 
     return leastSquare(X, y, W)
 
+def func(x, b, a, c):
+    ae = []
+    #print("X is :", x)
+    for i in x:
+        ae.append( a * i ** 2 + b * i + c)
+    #print(ae)
+    return ae
 
 """ ======================================================================================= """
 
@@ -193,6 +209,7 @@ def basesMenu():
     print("2 - Books, Attend and Grades Base")
     print("3 - US Census")
     print("4 - Height and Shoes")
+    print("5 - exemple Base")
     print("==================================")
 
 
@@ -207,17 +224,60 @@ def waterOption(option):
 
     if option == '1':
         X = xWithbias2D(x)
-        leastSquare(X, y, w)
+        ls = leastSquare(X, y, w)
+
+        z = ls
+        print("Z: ", z)
+
+        p = np.poly1d(z)
+
+        plt.scatter(X[0], y)
+        plt.plot(X[0], p(X[0]), "g--",  label='fit: a=%5.3f, b=%5.3f' % tuple(z))
+
+        plt.legend()
+        plt.xlabel('Pressure')
+        plt.ylabel('Bpt')
+        plt.show()
+
 
     elif option == '2':
 
         Xq = xWithBiasQuadratic2D(x)
-        leastSquare(Xq, y, w)
+        ls = leastSquare(Xq, y, w)
+
+        print(Xq)
+
+        z = ls
+        print("Z: ", z)
+
+        plt.scatter(Xq[0], y)
+
+        plt.plot(Xq[0], func(Xq[0], *z), "g--", label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(z))
+
+        plt.xlabel('Pressure')
+        plt.ylabel('Bpt')
+        plt.legend()
+        plt.show()
+
 
     elif option == '3':
         print('er')
         X = xWithbias2D(x)
-        wheightedLeastSquare(X, y, w)
+        ls = wheightedLeastSquare(X, y, w)
+
+        z = ls
+        print("Z: ", z)
+
+        p = np.poly1d(z)
+
+
+        plt.scatter(X[0], y)
+        plt.plot(X[0], p(X[0]), "g--", label='fit: a=%5.3f, b=%5.3f' % tuple(z))
+
+        plt.legend()
+        plt.xlabel('Pressure')
+        plt.ylabel('Bpt')
+        plt.show()
 
 
 def booksOption(option):
@@ -252,15 +312,59 @@ def censusOption(option):
 
     if option == '1':
         X = xWithbias2D(x)
-        leastSquare(X, y, w)
+        ls = leastSquare(X, y, w)
+
+        z = ls
+        print("Z: ", z)
+
+        p = np.poly1d(z)
+
+        plt.scatter(X[0], y)
+        plt.plot(X[0], p(X[0]), "g--", label='fit: a=%5.3f, b=%5.3f' % tuple(z))
+
+        plt.legend()
+        plt.xlabel('Pressure')
+        plt.ylabel('Bpt')
+        plt.show()
 
     elif option == '2':
-        X = xWithBiasQuadratic2D(x)
-        leastSquare(X, y, w)
+
+        Xq = xWithBiasQuadratic2D(x)
+        ls = leastSquare(Xq, y, w)
+
+        print(Xq)
+
+        z = ls
+        print("Z: ", z)
+
+        plt.scatter(Xq[0], y)
+
+        plt.plot(Xq[0], func(Xq[0], *z), "g--", label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(z))
+
+        plt.xlabel('Pressure')
+        plt.ylabel('Bpt')
+        plt.legend()
+        plt.show()
+
 
     elif option == '3':
+        print('er')
         X = xWithbias2D(x)
-        wheightedLeastSquare(X, y, w)
+        ls = wheightedLeastSquare(X, y, w)
+
+        z = ls
+        print("Z: ", z)
+
+        p = np.poly1d(z)
+
+
+        plt.scatter(X[0], y)
+        plt.plot(X[0], p(X[0]), "g--", label='fit: a=%5.3f, b=%5.3f' % tuple(z))
+
+        plt.legend()
+        plt.xlabel('Pressure')
+        plt.ylabel('Bpt')
+        plt.show()
 
 
 def shoesOption(option):
@@ -273,11 +377,130 @@ def shoesOption(option):
 
     if option == '1':
         X = xWithbias2D(x)
+        ls = leastSquare(X, y, w)
+
+        z = ls
+        print("Z: ", z)
+
+        p = np.poly1d(z)
+
+        plt.scatter(X[0], y)
+        plt.plot(X[0], p(X[0]), "g--", label='fit: a=%5.3f, b=%5.3f' % tuple(z))
+
+        plt.legend()
+        plt.xlabel('Pressure')
+        plt.ylabel('Bpt')
+        plt.show()
+
+
+    elif option == '2':
+
+        print('X: ', x)
+        print('Y: ', y)
+        Xq = xWithBiasQuadratic2D(x)
+        ls = leastSquare(Xq, y, w)
+
+        print("X with default bias: ", Xq)
+
+        z = ls
+        print("Z: ", z)
+
+        print("x2: ",func(Xq[0], *z) )
+
+        plt.scatter(Xq[0], y)
+
+        plt.scatter(Xq[0], func(Xq[0], *z))
+
+        #plt.plot(Xq[0], func(Xq[0], *z), "r--", label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(z))
+
+        plt.xlabel('Pressure')
+        plt.ylabel('Bpt')
+        plt.legend()
+        plt.show()
+
+
+    elif option == '3':
+        print('er')
+        X = xWithbias2D(x)
+        ls = wheightedLeastSquare(X, y, w)
+
+        z = ls
+        print("Z: ", z)
+
+        p = np.poly1d(z)
+
+        plt.scatter(X[0], y)
+        plt.plot(X[0], p(X[0]), "g--", label='fit: a=%5.3f, b=%5.3f' % tuple(z))
+
+        plt.legend()
+        plt.xlabel('Pressure')
+        plt.ylabel('Bpt')
+        plt.show()
+
+
+
+def exempleOption(option):
+    exemple = r'./bases/exemple.xlsx'
+    ex = pd.read_excel(exemple)
+
+    x = ex["x"]
+    y = ex["y"]
+    w = []
+
+    if option == '1':
+        X = xWithbias2D(x)
         leastSquare(X, y, w)
 
     elif option == '2':
         X = xWithBiasQuadratic2D(x)
-        leastSquare(X, y, w)
+        ls = leastSquare(X, y, w)
+
+        print(X)
+
+        z = ls
+        print("Z: ", z)
+        a1 = z[1]
+        b1 = z[0]
+
+        z1  = []
+
+        z1.append(a1)
+        z1.append(b1)
+        z1.append(z[2])
+
+        print("Z1: ", z1)
+
+
+        # p = np.poly1d(z)
+        # print("P: ",p)
+
+        # axes = plt.axis()
+
+        # axes = plt.add_subplot(111)
+
+        print(func(X[0], * z1))
+
+        a = []
+        b = []
+        # y=0
+        # x=-50
+
+        # for x3 in range(-50, 50, 1):
+        #     y3 = x3 ** 2 + 2 * x3 + 2
+        #     a.append(x3)
+        #     b.append(y3)
+        #     # x= x+1
+
+        plt.scatter(X[0], y)
+
+        plt.plot(X[0], func(X[0], *z1), "r--", label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(z1))
+
+        # plt.plot(x, x, 'r--')
+        # plt.plot(a, b, 'g-')
+        plt.xlabel('Pressure')
+        plt.ylabel('Bpt')
+        plt.legend()
+        plt.show()
 
     elif option == '3':
         X = xWithbias2D(x)
@@ -334,7 +557,8 @@ def dataBaseChoice(inp, option):
         "1": waterOption,
         "2": booksOption,
         "3": censusOption,
-        "4": shoesOption
+        "4": shoesOption,
+        "5": exempleOption
     }
 
     func = switcher.get(inp, lambda: "This option do not exist !")
@@ -352,78 +576,4 @@ if __name__ == '__main__':
     inp = input("Thype your option: ")
     methodChoice(inp)
 
-    """ =========== Case for books ========= """
-    #print(bag)
-
-    # x1 = bag["BOOKS"]
-    # x2 = bag["ATTEND"]
-    # y = bag["GRADE"]
-    # w = []
-    #
-    # X = xWithbias3D(x1, x2)
-    # #X = xwithBiasQuadratic3D(x1, x2)
-    #
-    # #print(X)
-    #
-    # sl = leastSquare(X, y, w)
-    # w = wheightedLeastSquare(X, y, w)
-    # wsl = leastSquare(X, y, w)
-    """ ===================================== """
-
-    """ ======= Case for Height Shoes ======= """
-    # x = hs["height"]
-    # print(x)
-    # y = hs["shoes"]
-    # print(y)
-    # w = []
-    #
-    # X = xWithbias2D(x)
-    #
-    # sl = leastSquare(X, y, w)
-    # w = wheightedLeastSquare(X, y, w)
-    # wsl = leastSquare(X, y, w)
-    """ ===================================== """
-
-    """ ===========Case for water============ """
-    # x = aw["BPt"]
-    # y = aw["Pressure"]
-    # w = []
-    #
-    # X = xWithbias2D(x)
-    #
-    # #Xq = xWithBiasQuadratic2D(x)
-    # print(X)
-    #
-    # sl = leastSquare(X, y, w)
-    #
-    # wheightedLeastSquare(X, y, w)
-
-
-
-    # # xd = x*sl[0]
-    # # #yd = y*sl[1]
-    # #
-    # plt.scatter(x, y, color='red')
-    #
-    # plt.plot()
-
-    # z = np.polyfit(xd, y, 1)
-    # p = np.poly1d(z)
-    # plt.plot(x, p(xd), "b--")
-    #
-    #
-    # plt.show()
-    """ ===================================== """
-
-    """ =========== Case for Census ========= """
-    # print(uc)
-    #
-    # x1 = uc["year"]
-    # y = uc["number"]
-    # w = []
-    #
-    # X = xWithbias2D(x1)
-    #
-    # sl = leastSquare(X, y, w)
-    """ ===================================== """
 
